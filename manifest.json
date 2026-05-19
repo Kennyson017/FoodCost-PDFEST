@@ -1,0 +1,21 @@
+{
+  "name": "FoodCost - Gestão e Precificação",
+  "short_name": "FoodCost",
+  "description": "Painel de inteligência financeira e precificação voltado para hamburguerias e lanchonetes.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#111111",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

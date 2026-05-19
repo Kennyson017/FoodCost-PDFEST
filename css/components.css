@@ -314,4 +314,51 @@ tbody tr:last-child td {
         flex-direction: column;
         gap: 16px;
     }
+
+    /* Mobile Table Cards */
+    table {
+        display: block;
+    }
+    
+    thead {
+        display: none;
+    }
+    
+    tbody {
+        display: block;
+        width: 100%;
+    }
+    
+    tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px;
+        background-color: var(--bg-card);
+    }
+    
+    td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-light);
+        text-align: right;
+    }
+    
+    td:last-child {
+        border-bottom: none;
+        justify-content: flex-end;
+    }
+    
+    td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        text-align: left;
+    }
 }

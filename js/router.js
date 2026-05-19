@@ -1,12 +1,14 @@
 // js/router.js
 import { renderDashboard } from './pages/dashboard.js';
 import { renderInsumos } from './pages/insumos.js';
+import { renderPreparos } from './pages/preparos.js';
 import { renderProdutos } from './pages/produtos.js';
 import { renderNegocio } from './pages/negocio.js';
 
 const routes = {
     'dashboard': renderDashboard,
     'insumos': renderInsumos,
+    'preparos': renderPreparos,
     'produtos': renderProdutos,
     'negocio': renderNegocio
 };

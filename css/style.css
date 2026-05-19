@@ -1,6 +1,6 @@
 /* css/style.css */
 :root {
-    /* Colors */
+    /* Colors - Dark Theme (Default) */
     --bg-dark: #111111;
     --bg-panel: #1a1a1a;
     --bg-card: #252525;
@@ -27,6 +27,23 @@
     
     /* Transitions */
     --transition: 0.2s ease-in-out;
+}
+
+[data-theme="light"] {
+    --bg-dark: #f8fafc;
+    --bg-panel: #ffffff;
+    --bg-card: #ffffff;
+    --bg-hover: #f1f5f9;
+    
+    --primary: #f59e0b;
+    --primary-hover: #d97706;
+    --primary-light: rgba(245, 158, 11, 0.15);
+    
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    
+    --border-color: rgba(0, 0, 0, 0.1);
+    --border-light: rgba(0, 0, 0, 0.15);
 }
 
 * {
@@ -72,14 +89,14 @@ p {
 }
 
 .sidebar-header {
-    padding: 24px;
+    padding: 24px 26px;
     border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .logo-icon {

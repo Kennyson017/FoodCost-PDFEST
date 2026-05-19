@@ -397,6 +397,29 @@ export const SEED_DATA = {
       obs: ""
     }
   ],
+  preparos: [
+    {
+      id: "prep_001",
+      nome: "Maionese Verde da Casa",
+      rendimentoBase: 800,
+      unidadeBase: "g",
+      ingredientes: [
+        { insumoId: "ins_005", nomeInsumo: "Ovo caipira", quantidade: 3, unidade: "un" },
+        { insumoId: "ins_027", nomeInsumo: "Óleo de soja", quantidade: 500, unidade: "ml" },
+        { insumoId: "ins_028", nomeInsumo: "Sal refinado", quantidade: 15, unidade: "g" }
+      ]
+    },
+    {
+      id: "prep_002",
+      nome: "Blend da Casa Especial 180g",
+      rendimentoBase: 180,
+      unidadeBase: "g",
+      ingredientes: [
+        { insumoId: "ins_001", nomeInsumo: "Blend bovino 80/20", quantidade: 150, unidade: "g" },
+        { insumoId: "ins_003", nomeInsumo: "Bacon fatiado defumado", quantidade: 30, unidade: "g" }
+      ]
+    }
+  ],
   produtos: [
     {
       id: "prod_001",
@@ -447,13 +470,13 @@ export const SEED_DATA = {
       id: "prod_004",
       nome: "O Clássico da Esquina",
       categoria: "Artesanal",
-      descricao: "Blend simples e suculento, queijo prato, rúcula, aioli no pão australiano",
+      descricao: "Blend especial da casa, queijo prato, rúcula, maionese verde no pão australiano",
       precoPraticado: 34.00,
       ingredientes: [
-        { insumoId: "ins_001", nomeInsumo: "Blend bovino 80/20", quantidade: 180, unidade: "g" },
+        { preparoId: "prep_002", nomeInsumo: "Blend da Casa Especial 180g", quantidade: 180, unidade: "g" },
+        { preparoId: "prep_001", nomeInsumo: "Maionese Verde da Casa", quantidade: 20, unidade: "g" },
         { insumoId: "ins_010", nomeInsumo: "Queijo prato fatiado", quantidade: 30, unidade: "g" },
         { insumoId: "ins_016", nomeInsumo: "Rúcula", quantidade: 20, unidade: "g" },
-        { insumoId: "ins_022", nomeInsumo: "Aioli de alho negro", quantidade: 20, unidade: "g" },
         { insumoId: "ins_007", nomeInsumo: "Pão australiano", quantidade: 1, unidade: "un" },
         { insumoId: "ins_023", nomeInsumo: "Caixa kraft para burger", quantidade: 1, unidade: "un" },
         { insumoId: "ins_024", nomeInsumo: "Papel manteiga impresso", quantidade: 1, unidade: "un" }

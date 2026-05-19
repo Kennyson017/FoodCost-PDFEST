@@ -3,19 +3,22 @@ import * as Calc from './calc.js';
 import { SEED_DATA } from './seed.js';
 
 const STORAGE_KEYS = {
-    INSUMOS: 'burgercost_insumos',
-    PRODUTOS: 'burgercost_produtos',
-    NEGOCIO: 'burgercost_negocio'
+    INSUMOS: 'foodcost_insumos',
+    PREPAROS: 'foodcost_preparos',
+    PRODUTOS: 'foodcost_produtos',
+    NEGOCIO: 'foodcost_negocio'
 };
 
 export const STATE = {
     insumos: [],
+    preparos: [],
     produtos: [],
     negocio: {}
 };
 
 export const loadState = () => {
     const insumosRaw = localStorage.getItem(STORAGE_KEYS.INSUMOS);
+    const preparosRaw = localStorage.getItem(STORAGE_KEYS.PREPAROS);
     const produtosRaw = localStorage.getItem(STORAGE_KEYS.PRODUTOS);
     const negocioRaw = localStorage.getItem(STORAGE_KEYS.NEGOCIO);
 
@@ -25,6 +28,7 @@ export const loadState = () => {
         needsSeed = true;
     } else {
         STATE.insumos = JSON.parse(insumosRaw);
+        STATE.preparos = preparosRaw ? JSON.parse(preparosRaw) : [];
         STATE.produtos = JSON.parse(produtosRaw);
         STATE.negocio = JSON.parse(negocioRaw);
     }
@@ -40,6 +44,7 @@ export const loadState = () => {
 
 export const saveState = () => {
     localStorage.setItem(STORAGE_KEYS.INSUMOS, JSON.stringify(STATE.insumos));
+    localStorage.setItem(STORAGE_KEYS.PREPAROS, JSON.stringify(STATE.preparos));
     localStorage.setItem(STORAGE_KEYS.PRODUTOS, JSON.stringify(STATE.produtos));
     localStorage.setItem(STORAGE_KEYS.NEGOCIO, JSON.stringify(STATE.negocio));
 };
@@ -57,6 +62,25 @@ export const recalculateState = () => {
     // Atualiza custo unitário dos insumos
     STATE.insumos.forEach(insumo => {
         insumo.custoUnitarioBase = Calc.calcCustoUnitario(insumo.precoCompra, insumo.quantidadeCompra, insumo.unidadeCompra);
+    });
+
+    // Atualiza custo unitário dos preparos
+    if (!STATE.preparos) STATE.preparos = [];
+    STATE.preparos.forEach(preparo => {
+        let custoTotalPreparo = 0;
+        if (preparo.ingredientes) {
+            preparo.ingredientes.forEach(ing => {
+                const insumoOrigem = STATE.insumos.find(i => i.id === ing.insumoId);
+                if (insumoOrigem) {
+                    ing.custoIngrediente = Calc.calcCustoIngrediente(insumoOrigem.custoUnitarioBase, ing.quantidade, insumoOrigem.rendimento);
+                    custoTotalPreparo += ing.custoIngrediente;
+                } else {
+                    ing.custoIngrediente = 0;
+                }
+            });
+        }
+        preparo.custoTotal = custoTotalPreparo;
+        preparo.custoUnitarioBase = preparo.rendimentoBase > 0 ? (custoTotalPreparo / preparo.rendimentoBase) : 0;
     });
 
     // Atualiza custos do negócio
@@ -79,11 +103,16 @@ export const recalculateState = () => {
         if (produto.ingredientes) {
             produto.ingredientes.forEach(ing => {
                 const insumoOrigem = STATE.insumos.find(i => i.id === ing.insumoId);
+                const preparoOrigem = STATE.preparos.find(p => p.id === ing.preparoId);
+                
                 if (insumoOrigem) {
                     ing.custoIngrediente = Calc.calcCustoIngrediente(insumoOrigem.custoUnitarioBase, ing.quantidade, insumoOrigem.rendimento);
                     custoIngredientes += ing.custoIngrediente;
+                } else if (preparoOrigem) {
+                    ing.custoIngrediente = Calc.calcCustoIngrediente(preparoOrigem.custoUnitarioBase, ing.quantidade, 100);
+                    custoIngredientes += ing.custoIngrediente;
                 } else {
-                    ing.custoIngrediente = 0; // Insumo deletado
+                    ing.custoIngrediente = 0; // Deletado
                 }
             });
         }
@@ -116,14 +145,21 @@ export const exportData = () => {
 export const importData = (jsonData) => {
     try {
         const parsedData = JSON.parse(jsonData);
-        if (parsedData.insumos && parsedData.produtos && parsedData.negocio) {
+        
+        // Basic Schema Validation
+        const hasInsumos = Array.isArray(parsedData.insumos);
+        const hasProdutos = Array.isArray(parsedData.produtos);
+        const hasNegocio = typeof parsedData.negocio === 'object' && parsedData.negocio !== null;
+
+        if (hasInsumos && hasProdutos && hasNegocio) {
             STATE.insumos = parsedData.insumos;
+            STATE.preparos = Array.isArray(parsedData.preparos) ? parsedData.preparos : [];
             STATE.produtos = parsedData.produtos;
             STATE.negocio = parsedData.negocio;
-            recalculateState();
-            saveState();
+            updateAndSaveState();
             return true;
         }
+        console.error("JSON schema invalid. Missing required arrays or objects.");
         return false;
     } catch (e) {
         console.error("Erro ao importar JSON", e);
@@ -136,6 +172,7 @@ const seedState = () => {
 
     STATE.negocio = JSON.parse(JSON.stringify(SEED_DATA.negocio));
     STATE.insumos = JSON.parse(JSON.stringify(SEED_DATA.insumos));
+    STATE.preparos = SEED_DATA.preparos ? JSON.parse(JSON.stringify(SEED_DATA.preparos)) : [];
     STATE.produtos = JSON.parse(JSON.stringify(SEED_DATA.produtos));
 };
 

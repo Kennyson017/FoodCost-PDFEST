@@ -1,10 +1,13 @@
 // js/pages/produtos.js
 import { STATE, saveState, generateId, updateAndSaveState } from '../state.js';
 import * as Calc from '../calc.js';
-import { showToast, escapeHTML, renderBadge } from '../components.js';
+import { showToast, escapeHTML, renderBadge, debounce } from '../components.js';
 
 let currentProdutoEditId = null;
 let currentIngredientes = []; // Estado temporário para a ficha técnica
+
+let searchQueryProd = '';
+let filterCategoriaProd = '';
 
 export const renderProdutos = (container, params = []) => {
     if (params.length > 0) {
@@ -26,27 +29,58 @@ export const renderProdutos = (container, params = []) => {
 };
 
 const renderList = (container) => {
-    const produtos = STATE.produtos || [];
+    let produtos = STATE.produtos || [];
     const margemMeta = STATE.negocio.margemMeta || 0;
 
+    // Filter
+    if (searchQueryProd) {
+        produtos = produtos.filter(p => p.nome.toLowerCase().includes(searchQueryProd.toLowerCase()));
+    }
+    if (filterCategoriaProd) {
+        produtos = produtos.filter(p => p.categoria === filterCategoriaProd);
+    }
+
+    const categories = ['Smash', 'Artesanal', 'Tradicional', 'Combo', 'Veggie', 'Sobremesa', 'Bebida', 'Acompanhamento'];
+
     container.innerHTML = `
-        <div class="header-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div class="header-action">
             <div>
                 <h1>Produtos do Cardápio</h1>
-                <p style="color: var(--text-muted);">${produtos.length} produtos cadastrados</p>
+                <p style="color: var(--text-muted);">${STATE.produtos.length} produtos totais</p>
             </div>
             <a href="#produtos/novo" class="btn btn-primary">+ Novo Produto</a>
+        </div>
+
+        <div class="card" style="margin-bottom: 24px; padding: 16px;">
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div style="flex: 2; min-width: 200px;">
+                    <input type="text" id="searchProduto" placeholder="Buscar produto por nome..." value="${escapeHTML(searchQueryProd)}" style="padding: 8px 16px;">
+                </div>
+                <div style="flex: 1; min-width: 150px;">
+                    <select id="filterCategoriaProduto" style="padding: 8px 16px;">
+                        <option value="">Todas as Categorias</option>
+                        ${categories.map(c => `<option value="${c}" ${filterCategoriaProd === c ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
         </div>
 
         <div class="card-grid">
             ${produtos.map(p => `
                 <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <h3 style="margin-bottom: 4px;">${escapeHTML(p.nome)}</h3>
-                            <span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(p.categoria)} • ${(p.ingredientes || []).length} insumos</span>
+                    <div style="display: flex; gap: 16px; align-items: flex-start;">
+                        <div style="width: 60px; height: 60px; border-radius: 8px; flex-shrink: 0; background-color: var(--bg-hover); background-image: url('${p.imagem || ''}'); background-size: cover; background-position: center; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                            ${!p.imagem ? '<span style="font-size: 1.5rem; color: var(--text-muted);">🍔</span>' : ''}
                         </div>
-                        ${renderBadge(p.margemReal, margemMeta)}
+                        <div style="flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <h3 style="margin-bottom: 4px;">${escapeHTML(p.nome)}</h3>
+                                    <span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(p.categoria)} • ${(p.ingredientes || []).length} insumos</span>
+                                </div>
+                                ${renderBadge(p.margemReal, margemMeta)}
+                            </div>
+                        </div>
                     </div>
                     
                     <div style="background-color: var(--bg-panel); padding: 12px; border-radius: 8px; font-size: 0.9rem;">
@@ -102,6 +136,26 @@ const renderList = (container) => {
             }
         });
     });
+
+    // Bind filters
+    const searchInput = container.querySelector('#searchProduto');
+    const categoryFilter = container.querySelector('#filterCategoriaProduto');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            searchQueryProd = e.target.value;
+            renderList(container);
+            const input = document.getElementById('searchProduto');
+            if (input) input.focus(); // keep focus
+        });
+    }
+
+    if (categoryFilter) {
+        categoryFilter.addEventListener('change', (e) => {
+            filterCategoriaProd = e.target.value;
+            renderList(container);
+        });
+    }
 };
 
 const renderForm = (container) => {
@@ -120,9 +174,12 @@ const renderForm = (container) => {
     const margemMeta = negocio.margemMeta || 0;
 
     container.innerHTML = `
-        <div class="header-action" style="margin-bottom: 24px;">
+        <div class="header-action">
             <a href="#produtos" style="color: var(--text-muted); text-decoration: none; display: inline-block; margin-bottom: 8px;">← Voltar para lista</a>
-            <h1>${currentProdutoEditId ? 'Editar Produto' : 'Novo Produto'}</h1>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <h1>${currentProdutoEditId ? 'Editar Produto' : 'Novo Produto'}</h1>
+                ${currentProdutoEditId ? `<button type="button" id="btnExportarPDF" class="btn btn-secondary">📄 Exportar PDF</button>` : ''}
+            </div>
         </div>
 
         <form id="produtoForm">
@@ -132,18 +189,31 @@ const renderForm = (container) => {
                     <!-- Dados Básicos -->
                     <div class="card">
                         <h2>Dados do Produto</h2>
-                        <div class="form-row">
-                            <div class="form-group" style="flex: 2;">
-                                <label>Nome do Produto *</label>
-                                <input type="text" id="prod_nome" value="${escapeHTML(produto.nome)}" required placeholder="Ex: Smash Duplo Bacon">
+                        <div class="form-row" style="align-items: center;">
+                            <div class="form-group" style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                <div id="imgPreview" style="width: 80px; height: 80px; border-radius: 8px; background-color: var(--bg-hover); background-image: url('${produto.imagem || ''}'); background-size: cover; background-position: center; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                    ${!produto.imagem ? '<span style="font-size: 24px; color: var(--text-muted);">📷</span>' : ''}
+                                </div>
+                                <label class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px; cursor: pointer;">
+                                    Foto
+                                    <input type="file" id="prod_imagem" accept="image/*" style="display: none;">
+                                </label>
                             </div>
-                            <div class="form-group">
-                                <label>Categoria *</label>
-                                <select id="prod_categoria">
-                                    ${['Smash', 'Artesanal', 'Tradicional', 'Combo', 'Veggie', 'Sobremesa', 'Bebida', 'Acompanhamento'].map(c => `
-                                        <option value="${c}" ${produto.categoria === c ? 'selected' : ''}>${c}</option>
-                                    `).join('')}
-                                </select>
+                            <div style="flex: 1; display: flex; flex-direction: column; gap: 16px;">
+                                <div class="form-row" style="margin-bottom: 0;">
+                                    <div class="form-group" style="flex: 2;">
+                                        <label>Nome do Produto *</label>
+                                        <input type="text" id="prod_nome" value="${escapeHTML(produto.nome)}" required placeholder="Ex: Smash Duplo Bacon">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Categoria *</label>
+                                        <select id="prod_categoria">
+                                            ${['Smash', 'Artesanal', 'Tradicional', 'Combo', 'Veggie', 'Sobremesa', 'Bebida', 'Acompanhamento'].map(c => `
+                                                <option value="${c}" ${produto.categoria === c ? 'selected' : ''}>${c}</option>
+                                            `).join('')}
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -154,8 +224,13 @@ const renderForm = (container) => {
                         
                         <div style="display: flex; gap: 12px; margin-bottom: 16px;">
                             <select id="insumoSelect" style="flex: 1;">
-                                <option value="">Selecione um insumo para adicionar...</option>
-                                ${STATE.insumos.map(i => `<option value="${i.id}">${escapeHTML(i.nome)} (${Calc.formatCurrency(i.custoUnitarioBase)}/${i.unidadeBase})</option>`).join('')}
+                                <option value="">Selecione um insumo ou preparo...</option>
+                                <optgroup label="Insumos">
+                                    ${STATE.insumos.map(i => `<option value="ins_${i.id}">${escapeHTML(i.nome)} (${Calc.formatCurrency(i.custoUnitarioBase)}/${i.unidadeBase})</option>`).join('')}
+                                </optgroup>
+                                <optgroup label="Preparos (Sub-receitas)">
+                                    ${(STATE.preparos || []).map(p => `<option value="prep_${p.id}">${escapeHTML(p.nome)} (${Calc.formatCurrency(p.custoUnitarioBase)}/${p.unidadeBase})</option>`).join('')}
+                                </optgroup>
                             </select>
                             <button type="button" id="btnAddInsumo" class="btn btn-secondary">Adicionar</button>
                         </div>
@@ -239,21 +314,35 @@ const bindFichaTecnicaEvents = (container) => {
     const form = container.querySelector('#produtoForm');
     const inputPrecoPraticado = container.querySelector('#prod_preco');
 
+    const debouncedUpdatePricingPanel = debounce(() => updatePricingPanel(container), 300);
+
     const renderFichaRows = () => {
         tbody.innerHTML = currentIngredientes.map((ing, index) => {
             const insumoData = STATE.insumos.find(i => i.id === ing.insumoId);
-            const nomeExibicao = insumoData ? insumoData.nome : (ing.nomeInsumo + ' (Removido)');
-            const unidadeExibicao = insumoData ? insumoData.unidadeBase : ing.unidade;
-            const custoItem = insumoData ? Calc.calcCustoIngrediente(insumoData.custoUnitarioBase, ing.quantidade, insumoData.rendimento) : 0;
+            const preparoData = (STATE.preparos || []).find(p => p.id === ing.preparoId);
+            
+            let nomeExibicao = 'Item Removido';
+            let unidadeExibicao = 'un';
+            let custoItem = 0;
+
+            if (insumoData) {
+                nomeExibicao = insumoData.nome;
+                unidadeExibicao = insumoData.unidadeBase;
+                custoItem = Calc.calcCustoIngrediente(insumoData.custoUnitarioBase, ing.quantidade, insumoData.rendimento);
+            } else if (preparoData) {
+                nomeExibicao = preparoData.nome + ' (Preparo)';
+                unidadeExibicao = preparoData.unidadeBase;
+                custoItem = Calc.calcCustoIngrediente(preparoData.custoUnitarioBase, ing.quantidade, 100);
+            }
             
             return `
                 <tr>
-                    <td>${escapeHTML(nomeExibicao)}</td>
-                    <td>
+                    <td data-label="Item">${escapeHTML(nomeExibicao)}</td>
+                    <td data-label="Quantidade">
                         <input type="number" step="0.01" min="0" class="input-qtd" data-index="${index}" value="${ing.quantidade}" style="padding: 6px; width: 100%;">
                     </td>
-                    <td style="color: var(--text-muted);">${escapeHTML(unidadeExibicao)}</td>
-                    <td>${Calc.formatCurrency(custoItem)}</td>
+                    <td data-label="Unidade" style="color: var(--text-muted);">${escapeHTML(unidadeExibicao)}</td>
+                    <td data-label="Custo">${Calc.formatCurrency(custoItem)}</td>
                     <td style="text-align: right;">
                         <button type="button" class="btn btn-danger btn-remove-ing" data-index="${index}" style="padding: 4px 8px; border: none;">✖</button>
                     </td>
@@ -262,7 +351,7 @@ const bindFichaTecnicaEvents = (container) => {
         }).join('');
 
         if (currentIngredientes.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Adicione insumos para compor o produto.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Adicione insumos ou preparos para compor o produto.</td></tr>`;
         }
 
         // Binds das linhas
@@ -270,7 +359,7 @@ const bindFichaTecnicaEvents = (container) => {
             input.addEventListener('input', (e) => {
                 const idx = parseInt(e.target.dataset.index);
                 currentIngredientes[idx].quantidade = parseFloat(e.target.value) || 0;
-                updatePricingPanel(container);
+                debouncedUpdatePricingPanel();
                 // Não re-renderiza a tabela toda no 'input' pra não perder foco, só atualiza painel
             });
             input.addEventListener('change', renderFichaRows); // re-renderiza no blur
@@ -288,29 +377,111 @@ const bindFichaTecnicaEvents = (container) => {
     };
 
     btnAdd.addEventListener('click', () => {
-        const id = select.value;
-        if (!id) return;
+        const val = select.value;
+        if (!val) return;
         
-        const insumo = STATE.insumos.find(i => i.id === id);
-        if (insumo) {
-            // Verifica se já existe, se sim só soma
-            const existe = currentIngredientes.find(i => i.insumoId === id);
-            if (existe) {
-                existe.quantidade += 1;
-            } else {
-                currentIngredientes.push({
-                    insumoId: id,
-                    nomeInsumo: insumo.nome,
-                    quantidade: 1, // default
-                    unidade: insumo.unidadeBase
-                });
+        const type = val.split('_')[0];
+        const id = val.substring(type.length + 1);
+
+        if (type === 'ins') {
+            const insumo = STATE.insumos.find(i => i.id === id);
+            if (insumo) {
+                const existe = currentIngredientes.find(i => i.insumoId === id);
+                if (existe) existe.quantidade += 1;
+                else currentIngredientes.push({ insumoId: id, nomeInsumo: insumo.nome, quantidade: 1, unidade: insumo.unidadeBase });
             }
-            select.value = ''; // reseta
-            renderFichaRows();
+        } else if (type === 'prep') {
+            const preparo = (STATE.preparos || []).find(p => p.id === id);
+            if (preparo) {
+                const existe = currentIngredientes.find(i => i.preparoId === id);
+                if (existe) existe.quantidade += 1;
+                else currentIngredientes.push({ preparoId: id, nomeInsumo: preparo.nome, quantidade: 1, unidade: preparo.unidadeBase });
+            }
+        }
+        
+        select.value = ''; // reseta
+        renderFichaRows();
+    });
+
+    inputPrecoPraticado.addEventListener('input', debouncedUpdatePricingPanel);
+
+    let currentImageBase64 = null;
+    const inputImagem = container.querySelector('#prod_imagem');
+    const imgPreview = container.querySelector('#imgPreview');
+
+    if (currentProdutoEditId) {
+        const p = STATE.produtos.find(prod => prod.id === currentProdutoEditId);
+        if (p && p.imagem) {
+            currentImageBase64 = p.imagem;
+        }
+    }
+
+    inputImagem.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                currentImageBase64 = ev.target.result;
+                imgPreview.style.backgroundImage = `url('${currentImageBase64}')`;
+                imgPreview.innerHTML = ''; // Remove the camera emoji
+            };
+            reader.readAsDataURL(file);
         }
     });
 
-    inputPrecoPraticado.addEventListener('input', () => updatePricingPanel(container));
+    const btnExportarPDF = container.querySelector('#btnExportarPDF');
+    if (btnExportarPDF) {
+        btnExportarPDF.addEventListener('click', () => {
+            const produtoNome = container.querySelector('#prod_nome').value || 'Produto';
+            
+            // Build a temporary hidden element for the PDF
+            const pdfContainer = document.createElement('div');
+            pdfContainer.style.padding = '20px';
+            pdfContainer.style.fontFamily = 'DM Sans, sans-serif';
+            pdfContainer.style.color = '#000';
+            pdfContainer.style.backgroundColor = '#fff';
+            
+            const ingredientesHtml = currentIngredientes.map(ing => {
+                const insumoData = STATE.insumos.find(i => i.id === ing.insumoId);
+                const preparoData = (STATE.preparos || []).find(p => p.id === ing.preparoId);
+                let nome = 'Removido';
+                let unidade = 'un';
+                if (insumoData) { nome = insumoData.nome; unidade = insumoData.unidadeBase; }
+                else if (preparoData) { nome = preparoData.nome + ' (Preparo)'; unidade = preparoData.unidadeBase; }
+                return `<li>${ing.quantidade} ${unidade} - ${nome}</li>`;
+            }).join('');
+
+            pdfContainer.innerHTML = `
+                <h1 style="font-family: Syne, sans-serif; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">Ficha Técnica</h1>
+                <h2>${escapeHTML(produtoNome)}</h2>
+                <p><strong>Categoria:</strong> ${container.querySelector('#prod_categoria').value}</p>
+                
+                <h3 style="margin-top: 20px;">Ingredientes:</h3>
+                <ul>${ingredientesHtml}</ul>
+                
+                <h3 style="margin-top: 20px;">Custos e Preços:</h3>
+                <p><strong>Custo de Ingredientes:</strong> ${container.querySelector('#lblCustoIngredientes').textContent}</p>
+                <p><strong>Custo Total de Produção:</strong> ${container.querySelector('#lblCustoTotal').textContent}</p>
+                <p><strong>Preço Praticado:</strong> ${Calc.formatCurrency(parseFloat(inputPrecoPraticado.value) || 0)}</p>
+                <p><strong>Preço Sugerido:</strong> ${container.querySelector('#lblPrecoSugerido').textContent}</p>
+            `;
+            
+            const opt = {
+                margin:       1,
+                filename:     `Ficha_Tecnica_${produtoNome.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Needs to be in body to render properly sometimes, so we attach, print, detach
+            document.body.appendChild(pdfContainer);
+            html2pdf().set(opt).from(pdfContainer).save().then(() => {
+                document.body.removeChild(pdfContainer);
+                showToast("PDF gerado com sucesso!");
+            });
+        });
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -325,7 +496,8 @@ const bindFichaTecnicaEvents = (container) => {
             nome: container.querySelector('#prod_nome').value,
             categoria: container.querySelector('#prod_categoria').value,
             precoPraticado: parseFloat(inputPrecoPraticado.value) || 0,
-            ingredientes: JSON.parse(JSON.stringify(currentIngredientes))
+            ingredientes: JSON.parse(JSON.stringify(currentIngredientes)),
+            imagem: currentImageBase64
         };
 
         if (currentProdutoEditId) {
@@ -348,8 +520,12 @@ const updatePricingPanel = (container) => {
     
     currentIngredientes.forEach(ing => {
         const insumo = STATE.insumos.find(i => i.id === ing.insumoId);
+        const preparo = (STATE.preparos || []).find(p => p.id === ing.preparoId);
+        
         if (insumo) {
             custoIngredientes += Calc.calcCustoIngrediente(insumo.custoUnitarioBase, ing.quantidade, insumo.rendimento);
+        } else if (preparo) {
+            custoIngredientes += Calc.calcCustoIngrediente(preparo.custoUnitarioBase, ing.quantidade, 100);
         }
     });
 

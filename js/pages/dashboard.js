@@ -46,29 +46,50 @@ export const renderDashboard = (container) => {
         ` : ''}
 
         <!-- Cards de Resumo -->
-        <div class="card-grid" style="margin-bottom: 32px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
-            <div class="card" style="padding: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Total de Insumos</p>
-                <h2 style="margin: 0; font-size: 2rem;">${totalInsumos}</h2>
+        <div class="card-grid" style="margin-bottom: 32px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Total de Insumos</span>
+                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🥩</span>
+                </div>
+                <h2 style="margin: 0; font-size: 2.2rem; font-weight: 700;">${totalInsumos}</h2>
             </div>
-            <div class="card" style="padding: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Produtos no Cardápio</p>
-                <h2 style="margin: 0; font-size: 2rem;">${totalProdutos}</h2>
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Produtos Ativos</span>
+                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🍔</span>
+                </div>
+                <h2 style="margin: 0; font-size: 2.2rem; font-weight: 700;">${totalProdutos}</h2>
             </div>
-            <div class="card" style="padding: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Maior Custo (Produção)</p>
-                <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-main);">${prodMaisCaro ? escapeHTML(prodMaisCaro.nome) : '-'}</h3>
-                <span style="color: var(--status-danger); font-weight: bold;">${prodMaisCaro ? Calc.formatCurrency(prodMaisCaro.custoTotalProducao) : 'R$ 0,00'}</span>
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Maior Custo</span>
+                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">💸</span>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMaisCaro ? escapeHTML(prodMaisCaro.nome) : '-'}">${prodMaisCaro ? escapeHTML(prodMaisCaro.nome) : '-'}</h3>
+                    <div style="color: var(--status-danger); font-weight: bold; margin-top: 4px; font-size: 1.2rem;">${prodMaisCaro ? Calc.formatCurrency(prodMaisCaro.custoTotalProducao) : 'R$ 0,00'}</div>
+                </div>
             </div>
-            <div class="card" style="padding: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Menor Margem</p>
-                <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-main);">${prodMenorMargem ? escapeHTML(prodMenorMargem.nome) : '-'}</h3>
-                <div>${prodMenorMargem ? renderBadge(prodMenorMargem.margemReal, margemMeta) : '-'}</div>
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Melhor Margem</span>
+                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🏆</span>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMaiorMargem ? escapeHTML(prodMaiorMargem.nome) : '-'}">${prodMaiorMargem ? escapeHTML(prodMaiorMargem.nome) : '-'}</h3>
+                    <div style="margin-top: 8px;">${prodMaiorMargem ? renderBadge(prodMaiorMargem.margemReal, margemMeta) : '-'}</div>
+                </div>
             </div>
-            <div class="card" style="padding: 20px;">
-                <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Melhor Margem</p>
-                <h3 style="margin: 0; font-size: 1.2rem; color: var(--text-main);">${prodMaiorMargem ? escapeHTML(prodMaiorMargem.nome) : '-'}</h3>
-                <div>${prodMaiorMargem ? renderBadge(prodMaiorMargem.margemReal, margemMeta) : '-'}</div>
+            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border-color: ${prodMenorMargem && prodMenorMargem.margemReal < 0 ? 'var(--status-danger)' : 'var(--border-color)'};">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Menor Margem</span>
+                    <span style="font-size: 1.2rem; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px;">⚠️</span>
+                </div>
+                <div>
+                    <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMenorMargem ? escapeHTML(prodMenorMargem.nome) : '-'}">${prodMenorMargem ? escapeHTML(prodMenorMargem.nome) : '-'}</h3>
+                    <div style="margin-top: 8px;">${prodMenorMargem ? renderBadge(prodMenorMargem.margemReal, margemMeta) : '-'}</div>
+                </div>
             </div>
         </div>
 
@@ -93,11 +114,11 @@ export const renderDashboard = (container) => {
                         <tbody>
                             ${produtos.sort((a, b) => a.margemReal - b.margemReal).map(p => `
                                 <tr>
-                                    <td><strong>${escapeHTML(p.nome)}</strong></td>
-                                    <td>${Calc.formatCurrency(p.custoTotalProducao)}</td>
-                                    <td style="color: var(--text-muted);">${Calc.formatCurrency(p.precoSugerido)}</td>
-                                    <td><strong>${Calc.formatCurrency(p.precoPraticado)}</strong></td>
-                                    <td>${renderBadge(p.margemReal, margemMeta)}</td>
+                                    <td data-label="Produto"><strong>${escapeHTML(p.nome)}</strong></td>
+                                    <td data-label="Custo Prod.">${Calc.formatCurrency(p.custoTotalProducao)}</td>
+                                    <td data-label="Sugerido" style="color: var(--text-muted);">${Calc.formatCurrency(p.precoSugerido)}</td>
+                                    <td data-label="Praticado"><strong>${Calc.formatCurrency(p.precoPraticado)}</strong></td>
+                                    <td data-label="Margem">${renderBadge(p.margemReal, margemMeta)}</td>
                                 </tr>
                             `).join('')}
                             ${produtos.length === 0 ? '<tr><td colspan="5" style="text-align: center; padding: 32px;">Nenhum produto cadastrado.</td></tr>' : ''}
@@ -106,31 +127,100 @@ export const renderDashboard = (container) => {
                 </div>
             </div>
 
-            <!-- Resumo Operacional -->
-            <div class="card" style="background-color: var(--primary-light); border-color: var(--primary);">
-                <h2 style="color: var(--primary); font-size: 1.2rem;">Sua Operação</h2>
-                
-                <div style="margin-top: 20px;">
-                    <p style="font-size: 0.9rem; color: var(--text-main);">Meta de Margem</p>
-                    <h3 style="font-size: 1.8rem; margin-bottom: 0;">${margemMeta}%</h3>
-                </div>
-                
-                <div style="margin-top: 16px;">
-                    <p style="font-size: 0.9rem; color: var(--text-main);">Custo Operacional Fixo</p>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 0;">${Calc.formatCurrency(negocio.totalCustosMensais || 0)}</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Dividido por ${negocio.volumeMensal || 0} vendas/mês</p>
-                </div>
-                
-                <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
-                    <p style="font-size: 0.9rem; color: var(--text-main);">Custo em cada Lanche</p>
-                    <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 0;">+ ${Calc.formatCurrency(negocio.custoOpUnitario || 0)}</h2>
+            <!-- Resumo Operacional e Gráfico -->
+            <div style="display: flex; flex-direction: column; gap: 24px;">
+                <div class="card" style="background-color: var(--primary-light); border-color: var(--primary);">
+                    <h2 style="color: var(--primary); font-size: 1.2rem;">Sua Operação</h2>
+                    
+                    <div style="margin-top: 20px;">
+                        <p style="font-size: 0.9rem; color: var(--text-main);">Meta de Margem</p>
+                        <h3 style="font-size: 1.8rem; margin-bottom: 0;">${margemMeta}%</h3>
+                    </div>
+                    
+                    <div style="margin-top: 16px;">
+                        <p style="font-size: 0.9rem; color: var(--text-main);">Custo Operacional Fixo</p>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0;">${Calc.formatCurrency(negocio.totalCustosMensais || 0)}</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Dividido por ${negocio.volumeMensal || 0} vendas/mês</p>
+                    </div>
+                    
+                    <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <p style="font-size: 0.9rem; color: var(--text-main);">Custo em cada Lanche</p>
+                        <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 0;">+ ${Calc.formatCurrency(negocio.custoOpUnitario || 0)}</h2>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <a href="#negocio" class="btn btn-primary" style="width: 100%; justify-content: center;">Ajustar Custos</a>
+                    </div>
                 </div>
 
-                <div style="margin-top: 24px;">
-                    <a href="#negocio" class="btn btn-primary" style="width: 100%; justify-content: center;">Ajustar Custos</a>
+                <div class="card">
+                    <h2 style="font-size: 1.2rem; margin-bottom: 16px;">Composição Média do Preço</h2>
+                    <canvas id="costChart" width="100" height="100"></canvas>
                 </div>
             </div>
-
         </div>
     `;
+
+    renderChart(produtos, negocio);
+};
+
+const renderChart = (produtos, negocio) => {
+    const canvas = document.getElementById('costChart');
+    if (!canvas) return;
+
+    if (produtos.length === 0) {
+        return;
+    }
+
+    // Calcula as médias
+    let avgIngredientes = 0;
+    let avgOp = negocio.custoOpUnitario || 0;
+    let avgTaxes = 0;
+    let avgProfit = 0;
+
+    produtos.forEach(p => {
+        avgIngredientes += p.custoIngredientes || 0;
+        const preco = p.precoPraticado || 0;
+        const impostosTotais = (negocio.taxaImpostos || 0) + (negocio.taxaMaquininha || 0);
+        avgTaxes += preco * (impostosTotais / 100);
+        avgProfit += preco - p.custoTotalProducao - (preco * (impostosTotais / 100));
+    });
+
+    avgIngredientes /= produtos.length;
+    avgTaxes /= produtos.length;
+    avgProfit /= produtos.length;
+
+    new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+            labels: ['Ingredientes', 'Custo Operacional', 'Impostos/Taxas', 'Lucro Limpo'],
+            datasets: [{
+                data: [
+                    Math.max(0, avgIngredientes), 
+                    Math.max(0, avgOp), 
+                    Math.max(0, avgTaxes), 
+                    Math.max(0, avgProfit)
+                ],
+                backgroundColor: [
+                    '#ef4444', // red
+                    '#f59e0b', // amber
+                    '#eab308', // yellow
+                    '#10b981'  // green
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: 'var(--text-main)',
+                        font: { family: 'DM Sans' }
+                    }
+                }
+            }
+        }
+    });
 };

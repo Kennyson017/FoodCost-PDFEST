@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FoodCost</title>
     
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f59e0b">
+    <link rel="apple-touch-icon" href="icons/icon-192.svg">
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +37,10 @@
                 <span class="nav-icon">🥩</span>
                 <span class="nav-label">Insumos</span>
             </a>
+            <a href="#preparos" class="nav-item" data-route="preparos">
+                <span class="nav-icon">🥣</span>
+                <span class="nav-label">Preparos</span>
+            </a>
             <a href="#produtos" class="nav-item" data-route="produtos">
                 <span class="nav-icon">🍔</span>
                 <span class="nav-label">Produtos</span>
@@ -41,6 +50,12 @@
                 <span class="nav-label">Negócio</span>
             </a>
         </nav>
+        <div style="margin-top: auto; padding: 24px 12px;">
+            <button id="themeToggleBtn" class="btn btn-secondary" style="width: 100%; justify-content: flex-start; border: none; padding: 12px 16px;">
+                <span class="nav-icon" id="themeIcon">☀️</span>
+                <span class="nav-label" id="themeLabel">Modo Claro</span>
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -53,6 +68,19 @@
     <div id="modal-container" class="modal-container hidden"></div>
 
     <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script type="module" src="js/app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(registration => {
+                    console.log('SW registered: ', registration);
+                }).catch(registrationError => {
+                    console.log('SW registration failed: ', registrationError);
+                });
+            });
+        }
+    </script>
 </body>
 </html>

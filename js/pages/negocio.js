@@ -163,10 +163,12 @@ export const renderNegocio = (container) => {
 };
 
 const bindEvents = (container) => {
+    const debouncedUpdate = debounce(updateSimulations, 300);
+
     // Escuta mudanças nos inputs para atualizar o painel lateral em tempo real
     const inputs = container.querySelectorAll('input, select');
     inputs.forEach(input => {
-        input.addEventListener('input', updateSimulations);
+        input.addEventListener('input', debouncedUpdate);
     });
 
     // Salvar
