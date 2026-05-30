@@ -16,15 +16,18 @@ const applyTheme = (theme) => {
     const root = document.documentElement;
     const icon = document.getElementById('themeIcon');
     const label = document.getElementById('themeLabel');
+    const logoImg = document.getElementById('app-logo');
 
     if (theme === 'light') {
         root.setAttribute('data-theme', 'light');
         if (icon) icon.innerHTML = '<i data-lucide="moon" style="width: 18px; height: 18px;"></i>';
         if (label) label.textContent = 'Modo Escuro';
+        if (logoImg) logoImg.src = 'icons/foodcost-logo-ambar.svg';
     } else {
         root.removeAttribute('data-theme');
         if (icon) icon.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px;"></i>';
         if (label) label.textContent = 'Modo Claro';
+        if (logoImg) logoImg.src = 'icons/foodcost-logo-escuro.svg';
     }
     
     if (window.lucide) {
