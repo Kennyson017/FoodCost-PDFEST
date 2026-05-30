@@ -48,16 +48,19 @@ const renderList = (container) => {
                 <h1>Produtos do Cardápio</h1>
                 <p style="color: var(--text-muted);">${STATE.produtos.length} produtos totais</p>
             </div>
-            <a href="#produtos/novo" class="btn btn-primary">+ Novo Produto</a>
+            <a href="#produtos/novo" class="btn btn-primary">
+                <i data-lucide="plus" style="width: 18px; height: 18px; margin-right: 8px;"></i> Novo Produto
+            </a>
         </div>
 
         <div class="card" style="margin-bottom: 24px; padding: 16px;">
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <div style="flex: 2; min-width: 200px;">
-                    <input type="text" id="searchProduto" placeholder="Buscar produto por nome..." value="${escapeHTML(searchQueryProd)}" style="padding: 8px 16px;">
+                <div style="flex: 2; min-width: 200px; position: relative;">
+                    <i data-lucide="search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px;"></i>
+                    <input type="text" id="searchProduto" placeholder="Buscar produto por nome..." value="${escapeHTML(searchQueryProd)}" style="padding: 12px 16px 12px 48px;">
                 </div>
                 <div style="flex: 1; min-width: 150px;">
-                    <select id="filterCategoriaProduto" style="padding: 8px 16px;">
+                    <select id="filterCategoriaProduto" style="padding: 12px 16px;">
                         <option value="">Todas as Categorias</option>
                         ${categories.map(c => `<option value="${c}" ${filterCategoriaProd === c ? 'selected' : ''}>${c}</option>`).join('')}
                     </select>
@@ -68,19 +71,19 @@ const renderList = (container) => {
         <div class="card-grid">
             ${produtos.map(p => `
                 <div class="product-card" data-id="${p.id}">
-                    <button class="card-menu-btn" data-id="${p.id}">⋮</button>
+                    <button class="card-menu-btn" data-id="${p.id}"><i data-lucide="more-vertical"></i></button>
                     <div class="card-menu-dropdown" id="dropdown-${p.id}">
                         <div class="card-menu-item btn-duplicar" data-id="${p.id}">
-                            <span>📋</span> Duplicar produto
+                            <i data-lucide="copy" style="width: 16px; height: 16px;"></i> Duplicar produto
                         </div>
                         <div class="card-menu-item danger btn-excluir" data-id="${p.id}">
-                            <span>🗑️</span> Excluir produto
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i> Excluir produto
                         </div>
                     </div>
 
                     <div class="card-header">
                         <div class="card-icon">
-                            ${p.imagem ? `<img src="${p.imagem}">` : '🍔'}
+                            ${p.imagem ? `<img src="${p.imagem}">` : '<i data-lucide="utensils" style="width: 32px; height: 32px; color: var(--primary);"></i>'}
                         </div>
                         <div class="card-title-block">
                             <h3 class="card-name">${escapeHTML(p.nome)}</h3>
@@ -114,6 +117,10 @@ const renderList = (container) => {
         </div>
     `;
 
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
     // Bind card click to edit
     container.querySelectorAll('.product-card').forEach(card => {
         card.addEventListener('click', (e) => {
@@ -143,7 +150,7 @@ const renderList = (container) => {
         if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-menu-dropdown')) {
             container.querySelectorAll('.card-menu-dropdown').forEach(d => d.classList.remove('show'));
         }
-    }, { once: true });
+    });
 
     // Bind excluir
     container.querySelectorAll('.btn-excluir').forEach(btn => {
@@ -216,7 +223,7 @@ const renderForm = (container) => {
             <a href="#produtos" style="color: var(--text-muted); text-decoration: none; display: inline-block; margin-bottom: 8px;">← Voltar para lista</a>
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h1>${currentProdutoEditId ? 'Editar Produto' : 'Novo Produto'}</h1>
-                ${currentProdutoEditId ? `<button type="button" id="btnExportarPDF" class="btn btn-secondary">📄 Exportar PDF</button>` : ''}
+                ${currentProdutoEditId ? `<button type="button" id="btnExportarPDF" class="btn btn-secondary"><i data-lucide="file-text" style="width: 18px; height: 18px; margin-right: 8px;"></i> Exportar PDF</button>` : ''}
             </div>
         </div>
 
@@ -230,7 +237,7 @@ const renderForm = (container) => {
                         <div class="form-row" style="align-items: center;">
                             <div class="form-group" style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                                 <div id="imgPreview" style="width: 80px; height: 80px; border-radius: 8px; background-color: var(--bg-hover); background-image: url('${produto.imagem || ''}'); background-size: cover; background-position: center; border: 1px dashed var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                                    ${!produto.imagem ? '<span style="font-size: 24px; color: var(--text-muted);">📷</span>' : ''}
+                                    ${!produto.imagem ? '<i data-lucide="camera" style="width: 32px; height: 32px; color: var(--text-muted);"></i>' : ''}
                                 </div>
                                 <label class="btn btn-secondary" style="font-size: 0.75rem; padding: 4px 8px; cursor: pointer;">
                                     Foto
@@ -342,6 +349,10 @@ const renderForm = (container) => {
         </form>
     `;
 
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
     bindFichaTecnicaEvents(container);
 };
 
@@ -382,7 +393,7 @@ const bindFichaTecnicaEvents = (container) => {
                     <td data-label="Unidade" style="color: var(--text-muted);">${escapeHTML(unidadeExibicao)}</td>
                     <td data-label="Custo">${Calc.formatCurrency(custoItem)}</td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn btn-danger btn-remove-ing" data-index="${index}" style="padding: 4px 8px; border: none;">✖</button>
+                        <button type="button" class="btn btn-danger btn-remove-ing" data-index="${index}" style="padding: 4px 8px; border: none;"><i data-lucide="x" style="width: 14px; height: 14px;"></i></button>
                     </td>
                 </tr>
             `;
@@ -392,15 +403,18 @@ const bindFichaTecnicaEvents = (container) => {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Adicione insumos ou preparos para compor o produto.</td></tr>`;
         }
 
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+
         // Binds das lines
         tbody.querySelectorAll('.input-qtd').forEach(input => {
             input.addEventListener('input', (e) => {
                 const idx = parseInt(e.target.dataset.index);
                 currentIngredientes[idx].quantidade = parseFloat(e.target.value) || 0;
                 debouncedUpdatePricingPanel();
-                // Não re-renderiza a tabela toda no 'input' pra não perder foco, só atualiza painel
             });
-            input.addEventListener('change', renderFichaRows); // re-renderiza no blur
+            input.addEventListener('change', renderFichaRows);
         });
 
         tbody.querySelectorAll('.btn-remove-ing').forEach(btn => {
@@ -461,7 +475,7 @@ const bindFichaTecnicaEvents = (container) => {
             reader.onload = (ev) => {
                 currentImageBase64 = ev.target.result;
                 imgPreview.style.backgroundImage = `url('${currentImageBase64}')`;
-                imgPreview.innerHTML = ''; // Remove the camera emoji
+                imgPreview.innerHTML = '';
             };
             reader.readAsDataURL(file);
         }

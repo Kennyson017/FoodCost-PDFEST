@@ -1,7 +1,7 @@
 // js/pages/insumos.js
 import { STATE, saveState, generateId, updateAndSaveState } from '../state.js';
 import * as Calc from '../calc.js';
-import { showToast, escapeHTML } from '../components.js';
+import { showToast, escapeHTML, debounce } from '../components.js';
 
 let currentInsumoEditId = null;
 let searchQuery = '';
@@ -42,16 +42,19 @@ const renderList = (container) => {
                 <h1>Insumos</h1>
                 <p style="color: var(--text-muted);">${STATE.insumos.length} itens totais</p>
             </div>
-            <a href="#insumos/novo" class="btn btn-primary">+ Novo Insumo</a>
+            <a href="#insumos/novo" class="btn btn-primary">
+                <i data-lucide="plus" style="width: 18px; height: 18px; margin-right: 8px;"></i> Novo Insumo
+            </a>
         </div>
 
         <div class="card" style="margin-bottom: 24px; padding: 16px;">
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <div style="flex: 2; min-width: 200px;">
-                    <input type="text" id="searchInsumo" placeholder="Buscar insumo por nome..." value="${escapeHTML(searchQuery)}" style="padding: 8px 16px;">
+                <div style="flex: 2; min-width: 200px; position: relative;">
+                    <i data-lucide="search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px;"></i>
+                    <input type="text" id="searchInsumo" placeholder="Buscar insumo por nome..." value="${escapeHTML(searchQuery)}" style="padding: 12px 16px 12px 48px;">
                 </div>
                 <div style="flex: 1; min-width: 150px;">
-                    <select id="filterCategoriaInsumo" style="padding: 8px 16px;">
+                    <select id="filterCategoriaInsumo" style="padding: 12px 16px;">
                         <option value="">Todas as Categorias</option>
                         ${categories.map(c => `<option value="${c}" ${filterCategoria === c ? 'selected' : ''}>${c}</option>`).join('')}
                     </select>
@@ -90,6 +93,10 @@ const renderList = (container) => {
             </table>
         </div>
     `;
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 
     // Bind excluir
     container.querySelectorAll('.btn-excluir').forEach(btn => {
@@ -224,6 +231,10 @@ const renderForm = (container) => {
             </form>
         </div>
     `;
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 
     // Lógica de UI em tempo real
     const form = container.querySelector('#insumoForm');

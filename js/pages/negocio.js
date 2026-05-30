@@ -12,11 +12,15 @@ export const renderNegocio = (container) => {
             <h1>Configurações do Negócio</h1>
             <div style="display: flex; gap: 12px; flex-wrap: wrap;">
                 <label class="btn btn-secondary" style="cursor: pointer; flex: 1; text-align: center;">
-                    Importar Backup
+                    <i data-lucide="upload" style="width: 18px; height: 18px; margin-right: 8px;"></i> Importar Backup
                     <input type="file" id="importFile" accept=".json" style="display: none;">
                 </label>
-                <button id="btnExportar" class="btn btn-secondary" style="flex: 1;">Exportar Backup</button>
-                <button id="btnSalvarNegocio" class="btn btn-primary" style="flex: 2;">Salvar Configurações</button>
+                <button id="btnExportar" class="btn btn-secondary" style="flex: 1;">
+                    <i data-lucide="download" style="width: 18px; height: 18px; margin-right: 8px;"></i> Exportar Backup
+                </button>
+                <button id="btnSalvarNegocio" class="btn btn-primary" style="flex: 2;">
+                    <i data-lucide="save" style="width: 18px; height: 18px; margin-right: 8px;"></i> Salvar Configurações
+                </button>
             </div>
         </div>
 
@@ -157,6 +161,10 @@ export const renderNegocio = (container) => {
             </div>
         </div>
     `;
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 
     bindEvents(container);
     updateSimulations();

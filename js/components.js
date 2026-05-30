@@ -4,12 +4,16 @@ export const showToast = (message, type = 'success') => {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    
-    const icon = type === 'success' ? '✅' : '❌';
-    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-    
+
+    const iconName = type === 'success' ? 'check-circle' : 'x-circle';
+    toast.innerHTML = `<i data-lucide="${iconName}"></i> <span>${message}</span>`;
+
     container.appendChild(toast);
-    
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
     setTimeout(() => {
         toast.style.animation = 'fadeOut 0.3s ease forwards';
         setTimeout(() => {
@@ -19,7 +23,8 @@ export const showToast = (message, type = 'success') => {
 };
 
 export const renderBadge = (margem, margemMeta) => {
-    let type = 'success';
+...
+
     if (margem < 0) type = 'danger';
     else if (margem < margemMeta) type = 'warning';
 

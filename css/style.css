@@ -29,6 +29,24 @@
     --transition: 0.2s ease-in-out;
 }
 
+/* Lucide Icons Global */
+[data-lucide] {
+    stroke-width: 1.75;
+    display: inline-block;
+    vertical-align: middle;
+    width: 1em;
+    height: 1em;
+}
+
+.icon-decorative [data-lucide] {
+    stroke-width: 1.5;
+}
+
+.icon-action [data-lucide], 
+.btn [data-lucide] {
+    stroke-width: 2;
+}
+
 [data-theme="light"] {
     --bg-dark: #f8fafc;
     --bg-panel: #ffffff;

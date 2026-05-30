@@ -40,13 +40,16 @@ const renderList = (container) => {
                 <h1>Sub-receitas (Preparos)</h1>
                 <p style="color: var(--text-muted);">${STATE.preparos.length} preparos totais</p>
             </div>
-            <a href="#preparos/novo" class="btn btn-primary">+ Novo Preparo</a>
+            <a href="#preparos/novo" class="btn btn-primary">
+                <i data-lucide="plus" style="width: 18px; height: 18px; margin-right: 8px;"></i> Novo Preparo
+            </a>
         </div>
 
         <div class="card" style="margin-bottom: 24px; padding: 16px;">
             <div style="display: flex; gap: 16px; flex-wrap: wrap;">
-                <div style="flex: 2; min-width: 200px;">
-                    <input type="text" id="searchPreparo" placeholder="Buscar preparo por nome..." value="${escapeHTML(searchQuery)}" style="padding: 8px 16px;">
+                <div style="flex: 2; min-width: 200px; position: relative;">
+                    <i data-lucide="search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); width: 18px; height: 18px;"></i>
+                    <input type="text" id="searchPreparo" placeholder="Buscar preparo por nome..." value="${escapeHTML(searchQuery)}" style="padding: 12px 16px 12px 48px;">
                 </div>
             </div>
         </div>
@@ -80,6 +83,10 @@ const renderList = (container) => {
             </table>
         </div>
     `;
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 
     container.querySelectorAll('.btn-excluir').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -199,6 +206,10 @@ const renderForm = (container) => {
         </form>
     `;
 
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
+
     bindFormEvents(container);
 };
 
@@ -228,7 +239,7 @@ const bindFormEvents = (container) => {
                     <td data-label="Unid" style="color: var(--text-muted);">${escapeHTML(unidadeExibicao)}</td>
                     <td data-label="Custo">${Calc.formatCurrency(custoItem)}</td>
                     <td style="text-align: right;">
-                        <button type="button" class="btn btn-danger btn-remove-ing" data-index="${index}" style="padding: 4px 8px; border: none;">✖</button>
+                        <button type="button" class="btn btn-danger btn-remove-ing" data-index="${index}" style="padding: 4px 8px; border: none;"><i data-lucide="x" style="width: 14px; height: 14px;"></i></button>
                     </td>
                 </tr>
             `;
@@ -236,6 +247,10 @@ const bindFormEvents = (container) => {
 
         if (currentIngredientesPreparo.length === 0) {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Adicione insumos à receita.</td></tr>`;
+        }
+
+        if (window.lucide) {
+            window.lucide.createIcons();
         }
 
         tbody.querySelectorAll('.input-qtd').forEach(input => {

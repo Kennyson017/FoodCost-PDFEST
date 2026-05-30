@@ -15,4 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 2. Inicializa o roteador
     initRouter();
+
+    // 3. Inicializa ícones
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 });

@@ -44,18 +44,23 @@ const handleRouteChange = () => {
     
     // Pequeno delay para forçar reflow e aplicar animação
     setTimeout(() => {
-        const renderFunc = routes[path];
-        
-        if (renderFunc) {
-            // Passa os parâmetros da rota (ex: ['insumos', 'novo'])
-            renderFunc(appContainer, hash.split('/').slice(1));
-        } else {
-            appContainer.innerHTML = `<h2>Página não encontrada</h2>`;
-        }
-        
-        appContainer.classList.add('view-enter');
-    }, 10);
-};
+        // js/router.js
+        ...
+                if (renderFunc) {
+                    // Passa os parâmetros da rota (ex: ['insumos', 'novo'])
+                    renderFunc(appContainer, hash.split('/').slice(1));
+                } else {
+                    appContainer.innerHTML = `<h2>Página não encontrada</h2>`;
+                }
+
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+
+                appContainer.classList.add('view-enter');
+            }, 10);
+        };
+        ...
 
 export const navigate = (path) => {
     window.location.hash = path;

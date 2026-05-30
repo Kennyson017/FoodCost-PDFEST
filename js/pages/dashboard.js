@@ -41,50 +41,60 @@ export const renderDashboard = (container) => {
 
         ${produtosEmPrejuizo > 0 ? `
             <div style="background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--status-danger); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
-                <strong style="color: var(--status-danger);">⚠️ Atenção:</strong> Você tem ${produtosEmPrejuizo} produto(s) sendo vendido(s) abaixo do custo de produção!
+                <strong style="color: var(--status-danger);"><i data-lucide="alert-triangle" style="width:16px;height:16px"></i> Atenção:</strong> Você tem ${produtosEmPrejuizo} produto(s) sendo vendido(s) abaixo do custo de produção!
             </div>
         ` : ''}
 
         <!-- Cards de Resumo -->
         <div class="card-grid" style="margin-bottom: 32px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card icon-decorative" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Total de Insumos</span>
-                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🥩</span>
+                    <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); color: var(--primary); border-radius: 8px;">
+                        <i data-lucide="package-open" style="width: 20px; height: 20px;"></i>
+                    </span>
                 </div>
                 <h2 style="margin: 0; font-size: 2.2rem; font-weight: 700;">${totalInsumos}</h2>
             </div>
-            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card icon-decorative" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Produtos Ativos</span>
-                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🍔</span>
+                    <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.1); color: var(--primary); border-radius: 8px;">
+                        <i data-lucide="utensils" style="width: 20px; height: 20px;"></i>
+                    </span>
                 </div>
                 <h2 style="margin: 0; font-size: 2.2rem; font-weight: 700;">${totalProdutos}</h2>
             </div>
-            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card icon-decorative" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Maior Custo</span>
-                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">💸</span>
+                    <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.1); color: var(--status-danger); border-radius: 8px;">
+                        <i data-lucide="trending-up" style="width: 20px; height: 20px;"></i>
+                    </span>
                 </div>
                 <div>
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMaisCaro ? escapeHTML(prodMaisCaro.nome) : '-'}">${prodMaisCaro ? escapeHTML(prodMaisCaro.nome) : '-'}</h3>
                     <div style="color: var(--status-danger); font-weight: bold; margin-top: 4px; font-size: 1.2rem;">${prodMaisCaro ? Calc.formatCurrency(prodMaisCaro.custoTotalProducao) : 'R$ 0,00'}</div>
                 </div>
             </div>
-            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="card icon-decorative" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Melhor Margem</span>
-                    <span style="font-size: 1.2rem; background: var(--bg-hover); padding: 8px; border-radius: 8px;">🏆</span>
+                    <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(16, 185, 129, 0.1); color: var(--status-success); border-radius: 8px;">
+                        <i data-lucide="trophy" style="width: 20px; height: 20px;"></i>
+                    </span>
                 </div>
                 <div>
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMaiorMargem ? escapeHTML(prodMaiorMargem.nome) : '-'}">${prodMaiorMargem ? escapeHTML(prodMaiorMargem.nome) : '-'}</h3>
                     <div style="margin-top: 8px;">${prodMaiorMargem ? renderBadge(prodMaiorMargem.margemReal, margemMeta) : '-'}</div>
                 </div>
             </div>
-            <div class="card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border-color: ${prodMenorMargem && prodMenorMargem.margemReal < 0 ? 'var(--status-danger)' : 'var(--border-color)'};">
+            <div class="card icon-decorative" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between; border-color: ${prodMenorMargem && prodMenorMargem.margemReal < 0 ? 'var(--status-danger)' : 'var(--border-color)'};">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
                     <span style="color: var(--text-muted); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Menor Margem</span>
-                    <span style="font-size: 1.2rem; background: rgba(239, 68, 68, 0.1); padding: 8px; border-radius: 8px;">⚠️</span>
+                    <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.1); color: var(--status-danger); border-radius: 8px;">
+                        <i data-lucide="alert-triangle" style="width: 20px; height: 20px;"></i>
+                    </span>
                 </div>
                 <div>
                     <h3 style="margin: 0; font-size: 1.1rem; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${prodMenorMargem ? escapeHTML(prodMenorMargem.nome) : '-'}">${prodMenorMargem ? escapeHTML(prodMenorMargem.nome) : '-'}</h3>
@@ -148,8 +158,10 @@ export const renderDashboard = (container) => {
                         <h2 style="font-size: 2rem; color: var(--primary); margin-bottom: 0;">+ ${Calc.formatCurrency(negocio.custoOpUnitario || 0)}</h2>
                     </div>
 
-                    <div style="margin-top: 24px;">
-                        <a href="#negocio" class="btn btn-primary" style="width: 100%; justify-content: center;">Ajustar Custos</a>
+                    <div class="form-group icon-action" style="margin-top: 24px; margin-bottom: 0;">
+                        <a href="#negocio" class="btn btn-primary" style="width: 100%; justify-content: center;">
+                            <i data-lucide="sliders-horizontal" style="width: 18px; height: 18px; margin-right: 8px;"></i> Ajustar Custos
+                        </a>
                     </div>
                 </div>
 
@@ -160,6 +172,10 @@ export const renderDashboard = (container) => {
             </div>
         </div>
     `;
+
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 
     renderChart(produtos, negocio);
 };

@@ -19,12 +19,16 @@ const applyTheme = (theme) => {
 
     if (theme === 'light') {
         root.setAttribute('data-theme', 'light');
-        if (icon) icon.textContent = '🌙';
+        if (icon) icon.innerHTML = '<i data-lucide="moon" style="width: 18px; height: 18px;"></i>';
         if (label) label.textContent = 'Modo Escuro';
     } else {
         root.removeAttribute('data-theme');
-        if (icon) icon.textContent = '☀️';
+        if (icon) icon.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px;"></i>';
         if (label) label.textContent = 'Modo Claro';
+    }
+    
+    if (window.lucide) {
+        window.lucide.createIcons();
     }
 };
 
