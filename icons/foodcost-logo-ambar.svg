@@ -1,17 +1,13 @@
-<svg width="560" height="108" viewBox="0 0 560 108" role="img" xmlns="http://www.w3.org/2000/svg">
-  <title>FoodCost Logo — versão âmbar</title>
-  <desc>Logo do sistema FoodCost, versão fundo âmbar</desc>
-  <rect x="0" y="0" width="560" height="108" rx="16" fill="#f59e0b"/>
-  <rect x="24" y="18" width="72" height="72" rx="14" fill="#1c1917"/>
-  <rect x="36" y="28" width="48" height="13" rx="6.5" fill="#f59e0b"/>
-  <circle cx="50" cy="34" r="2" fill="#1c1917" opacity="0.3"/>
-  <circle cx="62" cy="31" r="1.8" fill="#1c1917" opacity="0.3"/>
-  <circle cx="73" cy="35" r="1.8" fill="#1c1917" opacity="0.3"/>
-  <rect x="36" y="43" width="48" height="6" rx="1.5" fill="#16a34a"/>
-  <rect x="36" y="51" width="48" height="9" rx="2" fill="#292524"/>
-  <rect x="34" y="61" width="52" height="5" rx="1" fill="#fbbf24"/>
-  <rect x="36" y="67" width="48" height="11" rx="5.5" fill="#f59e0b"/>
-  <text x="112" y="68" font-family="Georgia, 'Times New Roman', serif" font-size="52px" font-weight="700" fill="#1c1917" letter-spacing="-1.5px">Food<tspan fill="#ffffff">Cost</tspan></text>
-  <line x1="112" y1="80" x2="530" y2="80" stroke="#d97706" stroke-width="1"/>
-  <text x="113" y="96" font-family="Arial, sans-serif" font-size="11.5px" fill="#92400e" letter-spacing="3.5px">PRECIFICAÇÃO INTELIGENTE</text>
+<svg width="400" height="72" viewBox="0 0 400 72" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>FoodCost Logo — versão clara</title>
+  <rect x="0" y="0" width="72" height="72" rx="14" fill="#f59e0b"/>
+  <rect x="12" y="10" width="48" height="13" rx="6.5" fill="#1c1917"/>
+  <circle cx="26" cy="16" r="2" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="38" cy="13" r="1.8" fill="#f59e0b" opacity="0.6"/>
+  <circle cx="49" cy="17" r="1.8" fill="#f59e0b" opacity="0.6"/>
+  <rect x="12" y="25" width="48" height="6" rx="1.5" fill="#16a34a"/>
+  <rect x="12" y="33" width="48" height="9" rx="2" fill="#292524"/>
+  <rect x="10" y="43" width="52" height="5" rx="1" fill="#fbbf24"/>
+  <rect x="12" y="49" width="48" height="11" rx="5.5" fill="#1c1917"/>
+  <text x="88" y="52" font-family="Georgia, 'Times New Roman', serif" font-size="50px" font-weight="700" fill="#1c1917" letter-spacing="-1.5px">Food<tspan fill="#f59e0b">Cost</tspan></text>
 </svg>
