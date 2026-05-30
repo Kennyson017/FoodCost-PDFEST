@@ -1,7 +1,7 @@
 // js/pages/negocio.js
 import { STATE, saveState, exportData, importData, loadState, updateAndSaveState } from '../state.js';
 import * as Calc from '../calc.js';
-import { showToast } from '../components.js';
+import { showToast, debounce } from '../components.js';
 
 export const renderNegocio = (container) => {
     const negocio = STATE.negocio || {};
@@ -167,11 +167,11 @@ export const renderNegocio = (container) => {
     }
 
     bindEvents(container);
-    updateSimulations();
+    updateSimulations(container);
 };
 
 const bindEvents = (container) => {
-    const debouncedUpdate = debounce(updateSimulations, 300);
+    const debouncedUpdate = debounce(() => updateSimulations(container), 300);
 
     // Escuta mudanças nos inputs para atualizar o painel lateral em tempo real
     const inputs = container.querySelectorAll('input, select');
@@ -180,7 +180,7 @@ const bindEvents = (container) => {
     });
 
     // Salvar
-    container.querySelector('#btnSalvarNegocio').addEventListener('click', handleSave);
+    container.querySelector('#btnSalvarNegocio').addEventListener('click', () => handleSave(container));
 
     // Exportar Backup
     container.querySelector('#btnExportar').addEventListener('click', () => {
@@ -210,48 +210,57 @@ const bindEvents = (container) => {
     });
 };
 
-const updateSimulations = () => {
+const updateSimulations = (container) => {
     // Coleta custos
     let totalCustosMensais = 0;
-    document.querySelectorAll('.custo-input').forEach(input => {
+    container.querySelectorAll('.custo-input').forEach(input => {
         totalCustosMensais += parseFloat(input.value) || 0;
     });
 
     // Coleta volume
-    const vendasDia = parseFloat(document.getElementById('neg_vendasDia').value) || 0;
-    const diasMes = parseFloat(document.getElementById('neg_diasMes').value) || 0;
+    const vendasDiaInput = container.querySelector('#neg_vendasDia');
+    const vendasDia = parseFloat(vendasDiaInput ? vendasDiaInput.value : 0) || 0;
+    
+    const diasMesInput = container.querySelector('#neg_diasMes');
+    const diasMes = parseFloat(diasMesInput ? diasMesInput.value : 0) || 0;
+    
     const volumeMensal = vendasDia * diasMes;
 
     // Calcula unitário
     const custoOpUnitario = Calc.calcCustoOpUnitario(totalCustosMensais, volumeMensal);
 
     // Atualiza DOM
-    document.getElementById('resumo_custoMensal').textContent = Calc.formatCurrency(totalCustosMensais);
-    document.getElementById('resumo_volume').textContent = volumeMensal + ' un';
-    document.getElementById('resumo_custoUnitario').textContent = Calc.formatCurrency(custoOpUnitario);
+    const resumoCustoMensal = container.querySelector('#resumo_custoMensal');
+    if (resumoCustoMensal) resumoCustoMensal.textContent = Calc.formatCurrency(totalCustosMensais);
+    
+    const resumoVolume = container.querySelector('#resumo_volume');
+    if (resumoVolume) resumoVolume.textContent = volumeMensal + ' un';
+    
+    const resumoCustoUnitario = container.querySelector('#resumo_custoUnitario');
+    if (resumoCustoUnitario) resumoCustoUnitario.textContent = Calc.formatCurrency(custoOpUnitario);
 };
 
-const handleSave = () => {
+const handleSave = (container) => {
     const negocio = STATE.negocio || {};
     
-    negocio.nomeEstabelecimento = document.getElementById('neg_nome').value;
-    negocio.tipo = document.getElementById('neg_tipo').value;
+    negocio.nomeEstabelecimento = container.querySelector('#neg_nome').value;
+    negocio.tipo = container.querySelector('#neg_tipo').value;
     
     negocio.custos = {
-        aluguel: parseFloat(document.getElementById('custo_aluguel').value) || 0,
-        salarios: parseFloat(document.getElementById('custo_salarios').value) || 0,
-        prolabore: parseFloat(document.getElementById('custo_prolabore').value) || 0,
-        energia: parseFloat(document.getElementById('custo_energia').value) || 0,
-        agua_gas: parseFloat(document.getElementById('custo_agua_gas').value) || 0,
-        outros: parseFloat(document.getElementById('custo_outros').value) || 0
+        aluguel: parseFloat(container.querySelector('#custo_aluguel').value) || 0,
+        salarios: parseFloat(container.querySelector('#custo_salarios').value) || 0,
+        prolabore: parseFloat(container.querySelector('#custo_prolabore').value) || 0,
+        energia: parseFloat(container.querySelector('#custo_energia').value) || 0,
+        agua_gas: parseFloat(container.querySelector('#custo_agua_gas').value) || 0,
+        outros: parseFloat(container.querySelector('#custo_outros').value) || 0
     };
 
-    negocio.vendasDia = parseFloat(document.getElementById('neg_vendasDia').value) || 0;
-    negocio.diasMes = parseFloat(document.getElementById('neg_diasMes').value) || 0;
-    negocio.margemMeta = parseFloat(document.getElementById('neg_margemMeta').value) || 0;
+    negocio.vendasDia = parseFloat(container.querySelector('#neg_vendasDia').value) || 0;
+    negocio.diasMes = parseFloat(container.querySelector('#neg_diasMes').value) || 0;
+    negocio.margemMeta = parseFloat(container.querySelector('#neg_margemMeta').value) || 0;
     
     // Tratamos impostos e maquininha num input só na UI para simplificar, mas salvamos em impostos
-    negocio.taxaImpostos = parseFloat(document.getElementById('neg_impostos').value) || 0;
+    negocio.taxaImpostos = parseFloat(container.querySelector('#neg_impostos').value) || 0;
     negocio.taxaMaquininha = 0;
 
     STATE.negocio = negocio;
@@ -260,5 +269,5 @@ const handleSave = () => {
     updateAndSaveState(); // Ele chama recalculateState() e saveState() internamente
     
     showToast("Configurações salvas com sucesso!");
-    updateSimulations();
+    updateSimulations(container);
 };
