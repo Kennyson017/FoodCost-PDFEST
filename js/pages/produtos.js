@@ -593,7 +593,11 @@ const updatePricingPanel = (container) => {
     );
 
     const precoPraticado = parseFloat(container.querySelector('#prod_preco').value) || 0;
-    const margemReal = Calc.calcMargemReal(precoPraticado, custoTotal);
+    
+    // Calcula a margem real passando os impostos
+    const impostos = negocio.taxaImpostos || 0;
+    const taxaMaquininha = negocio.taxaMaquininha || 0;
+    const margemReal = Calc.calcMargemReal(precoPraticado, custoTotal, impostos, taxaMaquininha);
 
     container.querySelector('#lblCustoIngredientes').textContent = Calc.formatCurrency(custoIngredientes);
     container.querySelector('#lblCustoTotal').textContent = Calc.formatCurrency(custoTotal);

@@ -39,10 +39,14 @@ export const calcPrecoSugerido = (custoTotal, margemMeta = 0, impostos = 0, taxa
     return custoTotal / markupDivisor;
 };
 
-export const calcMargemReal = (precoPraticado, custoTotal) => {
+export const calcMargemReal = (precoPraticado, custoTotal, impostos = 0, taxaMaquininha = 0) => {
     if (!precoPraticado || precoPraticado <= 0) return 0;
-    // Margem (%) = ((Preço - Custo) / Preço) * 100
-    return ((precoPraticado - custoTotal) / precoPraticado) * 100;
+    
+    const taxasTotais = (parseFloat(impostos) + parseFloat(taxaMaquininha)) / 100;
+    const valorImpostos = precoPraticado * taxasTotais;
+    
+    // Margem (%) = ((Preço - Custo - Impostos) / Preço) * 100
+    return ((precoPraticado - custoTotal - valorImpostos) / precoPraticado) * 100;
 };
 
 export const calcCustoOpUnitario = (totalCustosMensais, volumeMensal) => {
