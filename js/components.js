@@ -23,7 +23,7 @@ export const showToast = (message, type = 'success') => {
 };
 
 export const renderBadge = (margem, margemMeta) => {
-...
+    let type = 'success';
 
     if (margem < 0) type = 'danger';
     else if (margem < margemMeta) type = 'warning';
