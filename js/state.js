@@ -96,6 +96,9 @@ export const recalculateState = () => {
     negocio.totalCustosMensais = totalCustos;
     negocio.custoOpUnitario = Calc.calcCustoOpUnitario(negocio.totalCustosMensais, negocio.volumeMensal);
 
+    const impostos = negocio.taxaImpostos || 0;
+    const taxaMaquininha = negocio.taxaMaquininha || 0;
+
     // Atualiza produtos (custo de ingredientes, produção, sugerido e margem)
     STATE.produtos.forEach(produto => {
         let custoIngredientes = 0;
@@ -124,11 +127,11 @@ export const recalculateState = () => {
         produto.precoSugerido = Calc.calcPrecoSugerido(
             produto.custoTotalProducao, 
             negocio.margemMeta || 0, 
-            negocio.taxaImpostos || 0, 
-            negocio.taxaMaquininha || 0
+            impostos, 
+            taxaMaquininha
         );
         
-        produto.margemReal = Calc.calcMargemReal(produto.precoPraticado, produto.custoTotalProducao);
+        produto.margemReal = Calc.calcMargemReal(produto.precoPraticado, produto.custoTotalProducao, impostos, taxaMaquininha);
     });
 };
 
