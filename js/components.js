@@ -19,13 +19,11 @@ export const showToast = (message, type = 'success') => {
 };
 
 export const renderBadge = (margem, margemMeta) => {
-    if (margem < 0) {
-        return `<span class="badge badge-danger">🔴 Prejuízo (${margem.toFixed(1)}%)</span>`;
-    } else if (margem < margemMeta) {
-        return `<span class="badge badge-warning">🟡 Apertado (${margem.toFixed(1)}%)</span>`;
-    } else {
-        return `<span class="badge badge-success">🟢 Saudável (${margem.toFixed(1)}%)</span>`;
-    }
+    let type = 'success';
+    if (margem < 0) type = 'danger';
+    else if (margem < margemMeta) type = 'warning';
+
+    return `<span class="badge badge-${type}">${margem.toFixed(1)}%</span>`;
 };
 
 export const escapeHTML = (str) => {

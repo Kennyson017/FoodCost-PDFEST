@@ -171,16 +171,194 @@ tbody tr:last-child td {
 .badge {
     display: inline-flex;
     align-items: center;
-    padding: 4px 10px;
-    border-radius: 99px;
-    font-size: 0.8rem;
-    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    white-space: nowrap;
+    line-height: 1.2;
+    flex-shrink: 0;
 }
 
 .badge-success { background-color: rgba(16, 185, 129, 0.15); color: var(--status-success); }
 .badge-warning { background-color: rgba(234, 179, 8, 0.15); color: var(--status-warning); }
 .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--status-danger); }
 .badge-neutral { background-color: var(--bg-hover); color: var(--text-muted); }
+
+/* Product Card Refactor */
+.product-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.product-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 20px var(--primary-light);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 4px;
+}
+
+.card-icon {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  border-radius: 14px;
+  background: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  overflow: hidden;
+}
+
+.card-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-title-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.card-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.card-meta {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.product-divider {
+    border-top: 1px solid var(--border-color);
+    margin: 4px 0;
+}
+
+.product-data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-data-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+.product-data-value {
+    font-size: 0.78rem;
+    color: #bbb;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+}
+
+.product-price-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.product-price-practiced {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.price-inline-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Kebab Menu Styles */
+.card-menu-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s, color 0.15s;
+    z-index: 2;
+}
+
+.card-menu-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-main);
+}
+
+.card-menu-dropdown {
+    position: absolute;
+    top: 36px;
+    right: 12px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    min-width: 170px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    z-index: 10;
+    overflow: hidden;
+    display: none;
+}
+
+.card-menu-dropdown.show {
+    display: block;
+}
+
+.card-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    color: var(--text-main);
+    transition: background 0.1s;
+}
+
+.card-menu-item:hover {
+    background: var(--bg-hover);
+}
+
+.card-menu-item.danger {
+    color: #ef4444;
+}
+
+.card-menu-item.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
 
 /* Toasts */
 .toast-container {

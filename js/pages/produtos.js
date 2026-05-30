@@ -67,41 +67,46 @@ const renderList = (container) => {
 
         <div class="card-grid">
             ${produtos.map(p => `
-                <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
-                    <div style="display: flex; gap: 16px; align-items: flex-start;">
-                        <div style="width: 60px; height: 60px; border-radius: 8px; flex-shrink: 0; background-color: var(--bg-hover); background-image: url('${p.imagem || ''}'); background-size: cover; background-position: center; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden;">
-                            ${!p.imagem ? '<span style="font-size: 1.5rem; color: var(--text-muted);">🍔</span>' : ''}
+                <div class="product-card" data-id="${p.id}">
+                    <button class="card-menu-btn" data-id="${p.id}">⋮</button>
+                    <div class="card-menu-dropdown" id="dropdown-${p.id}">
+                        <div class="card-menu-item btn-duplicar" data-id="${p.id}">
+                            <span>📋</span> Duplicar produto
                         </div>
-                        <div style="flex: 1;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                                <div>
-                                    <h3 style="margin-bottom: 4px;">${escapeHTML(p.nome)}</h3>
-                                    <span style="font-size: 0.8rem; color: var(--text-muted);">${escapeHTML(p.categoria)} • ${(p.ingredientes || []).length} insumos</span>
-                                </div>
-                                ${renderBadge(p.margemReal, margemMeta)}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background-color: var(--bg-panel); padding: 12px; border-radius: 8px; font-size: 0.9rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: var(--text-muted);">Custo de Produção</span>
-                            <strong>${Calc.formatCurrency(p.custoTotalProducao)}</strong>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                            <span style="color: var(--text-muted);">Preço Sugerido</span>
-                            <span>${Calc.formatCurrency(p.precoSugerido)}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--border-color); padding-top: 8px; margin-top: 8px;">
-                            <span style="color: var(--text-muted);">Preço Praticado</span>
-                            <strong style="color: var(--primary); font-size: 1.1rem;">${Calc.formatCurrency(p.precoPraticado)}</strong>
+                        <div class="card-menu-item danger btn-excluir" data-id="${p.id}">
+                            <span>🗑️</span> Excluir produto
                         </div>
                     </div>
 
-                    <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: auto;">
-                        <button class="btn btn-secondary btn-duplicar" data-id="${p.id}" style="padding: 6px 12px; font-size: 0.85rem;">Duplicar</button>
-                        <a href="#produtos/${p.id}/editar" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;">Editar</a>
-                        <button class="btn btn-danger btn-excluir" data-id="${p.id}" style="padding: 6px 12px; font-size: 0.85rem;">Excluir</button>
+                    <div class="card-header">
+                        <div class="card-icon">
+                            ${p.imagem ? `<img src="${p.imagem}">` : '🍔'}
+                        </div>
+                        <div class="card-title-block">
+                            <h3 class="card-name">${escapeHTML(p.nome)}</h3>
+                            <span class="card-meta">${escapeHTML(p.categoria)} • ${(p.ingredientes || []).length} insumos</span>
+                        </div>
+                    </div>
+                    
+                    <div class="product-divider"></div>
+
+                    <div class="product-data-row">
+                        <span class="product-data-label">Custo de Produção</span>
+                        <span class="product-data-value">${Calc.formatCurrency(p.custoTotalProducao)}</span>
+                    </div>
+                    <div class="product-data-row">
+                        <span class="product-data-label">Preço Sugerido (${margemMeta}%)</span>
+                        <span class="product-data-value">${Calc.formatCurrency(p.precoSugerido)}</span>
+                    </div>
+
+                    <div class="product-divider"></div>
+
+                    <div class="product-footer">
+                        <span class="product-price-label">Preço Praticado</span>
+                        <div class="price-inline-group">
+                            <span class="product-price-practiced">${Calc.formatCurrency(p.precoPraticado)}</span>
+                            ${renderBadge(p.margemReal, margemMeta)}
+                        </div>
                     </div>
                 </div>
             `).join('')}
@@ -109,11 +114,43 @@ const renderList = (container) => {
         </div>
     `;
 
+    // Bind card click to edit
+    container.querySelectorAll('.product-card').forEach(card => {
+        card.addEventListener('click', (e) => {
+            // Prevent if clicking on menu elements
+            if (e.target.closest('.card-menu-btn') || e.target.closest('.card-menu-dropdown')) return;
+            window.location.hash = `#produtos/${card.dataset.id}/editar`;
+        });
+    });
+
+    // Bind kebab menu
+    container.querySelectorAll('.card-menu-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dropdown = container.querySelector(`#dropdown-${btn.dataset.id}`);
+            
+            // Close all other dropdowns
+            container.querySelectorAll('.card-menu-dropdown').forEach(d => {
+                if (d !== dropdown) d.classList.remove('show');
+            });
+            
+            dropdown.classList.toggle('show');
+        });
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.card-menu-btn') && !e.target.closest('.card-menu-dropdown')) {
+            container.querySelectorAll('.card-menu-dropdown').forEach(d => d.classList.remove('show'));
+        }
+    }, { once: true });
+
     // Bind excluir
     container.querySelectorAll('.btn-excluir').forEach(btn => {
         btn.addEventListener('click', (e) => {
+            e.stopPropagation();
             if (confirm("Tem certeza que deseja excluir este produto?")) {
-                STATE.produtos = STATE.produtos.filter(p => p.id !== e.target.dataset.id);
+                STATE.produtos = STATE.produtos.filter(p => p.id !== btn.dataset.id);
                 updateAndSaveState();
                 showToast("Produto excluído.");
                 renderList(container);
@@ -124,7 +161,8 @@ const renderList = (container) => {
     // Bind duplicar
     container.querySelectorAll('.btn-duplicar').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const original = STATE.produtos.find(p => p.id === e.target.dataset.id);
+            e.stopPropagation();
+            const original = STATE.produtos.find(p => p.id === btn.dataset.id);
             if (original) {
                 const copia = JSON.parse(JSON.stringify(original));
                 copia.id = generateId();
@@ -354,7 +392,7 @@ const bindFichaTecnicaEvents = (container) => {
             tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Adicione insumos ou preparos para compor o produto.</td></tr>`;
         }
 
-        // Binds das linhas
+        // Binds das lines
         tbody.querySelectorAll('.input-qtd').forEach(input => {
             input.addEventListener('input', (e) => {
                 const idx = parseInt(e.target.dataset.index);
